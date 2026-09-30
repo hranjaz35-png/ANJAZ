@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>شركة إنجاز | نظام العملاء والأداء</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #060B1E;
+    --navy-2: #0C1A3D;
+    --teal: #0EA5C4;
+    --teal-2: #22D3EE;
+    --red: #E15B52;
+    --gold: #E0A93A;
+    --bg: #F3F6F9;
+    --card: #FFFFFF;
+    --ink: #101522;
+    --muted: #6B7280;
+    --line: #E3E7EC;
+    --radius: 14px;
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg: #0A0E17; --card: #121A2C; --ink: #E7ECF5; --muted: #8B96AC; --line: #232E45;
+    }
+  }
+  :root[data-theme="dark"] { --bg: #0A0E17; --card: #121A2C; --ink: #E7ECF5; --muted: #8B96AC; --line: #232E45; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'Cairo',system-ui,sans-serif; background:var(--bg); color:var(--ink); min-height:100%; -webkit-font-smoothing:antialiased; }
+  #app { min-height:100vh; display:flex; flex-direction:column; }
+
+  .login-wrap { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:32px 20px calc(32px + env(safe-area-inset-bottom,0px)); background: radial-gradient(circle at 50% 20%, #0F2A52, var(--navy) 68%); color:#EAF2FF; position:relative; overflow:hidden; }
+  .login-wrap::before { content:""; position:absolute; inset:0; background-image: radial-gradient(1px 1px at 20% 30%, rgba(34,211,238,.5) 0, transparent 60%), radial-gradient(1px 1px at 70% 60%, rgba(34,211,238,.4) 0, transparent 60%), radial-gradient(1px 1px at 40% 80%, rgba(34,211,238,.35) 0, transparent 60%), radial-gradient(1px 1px at 85% 20%, rgba(34,211,238,.4) 0, transparent 60%); pointer-events:none; }
+  .login-mark { width:78px; height:78px; border-radius:50%; background: radial-gradient(circle, rgba(34,211,238,.25), transparent 70%); display:flex; align-items:center; justify-content:center; font-size:38px; margin-bottom:16px; box-shadow:0 0 30px 6px rgba(34,211,238,.35); border:1px solid rgba(34,211,238,.5); }
+  .brand-word { font-size:26px; font-weight:900; letter-spacing:.5px; background:linear-gradient(90deg,#7DD8EA,#22D3EE); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:2px; }
+  .login-title { font-size:16px; font-weight:700; margin:0 0 4px; text-align:center; color:#BFEFFA; }
+  .login-sub { color:#9FB4CC; font-size:14px; margin:0 0 28px; text-align:center; max-width:320px; line-height:1.6; }
+  .login-card { background:rgba(255,255,255,.05); border:1px solid rgba(34,211,238,.25); border-radius:var(--radius); padding:22px; width:100%; max-width:360px; backdrop-filter:blur(8px); box-shadow:0 0 40px rgba(14,165,196,.12); position:relative; z-index:1; }
+  .field-label { font-size:13px; color:#9FB4CC; margin-bottom:6px; display:block; font-weight:600; }
+  input, select, textarea { width:100%; font-family:inherit; font-size:16px; padding:12px 14px; border-radius:10px; border:1.5px solid var(--line); background:var(--card); color:var(--ink); outline:none; }
+  .login-card input { background:rgba(255,255,255,.95); border:none; color:#14171C; letter-spacing:1px; text-align:center; font-weight:700; }
+  input:focus, select:focus, textarea:focus { border-color:var(--teal); }
+  .btn { appearance:none; border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:15px; border-radius:10px; padding:13px 18px; display:inline-flex; align-items:center; justify-content:center; gap:8px; transition:transform .08s ease, opacity .15s ease; }
+  .btn:active { transform:scale(.97); }
+  .btn-primary { background: linear-gradient(135deg, var(--teal), var(--teal-2)); color:#fff; width:100%; margin-top:16px; }
+  .btn-outline { background:transparent; border:1.5px solid var(--line); color:var(--ink); }
+  .btn-ghost { background:var(--bg); color:var(--ink); }
+  .btn-red { background:var(--red); color:#fff; }
+  .btn-sm { padding:9px 12px; font-size:13.5px; border-radius:9px; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .login-error { color:#FFB4AC; font-size:13.5px; margin-top:12px; text-align:center; min-height:18px; }
+
+  .topbar { position:sticky; top:0; z-index:20; background:var(--navy); color:#fff; padding: calc(14px + env(safe-area-inset-top,0px)) 18px 14px; display:flex; align-items:center; justify-content:space-between; }
+  .topbar-title { font-size:17px; font-weight:800; }
+  .topbar-sub { font-size:12px; color:#C7C2AE; margin-top:2px; }
+  .topbar-logout { background:rgba(255,255,255,.12); color:#fff; border:none; border-radius:8px; padding:8px 12px; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; }
+
+  main { flex:1; padding:16px 16px calc(96px + env(safe-area-inset-bottom,0px)); max-width:640px; margin:0 auto; width:100%; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:14px; }
+  .card-title { font-size:15.5px; font-weight:800; margin:0 0 12px; }
+  .field { margin-bottom:14px; }
+  .field:last-child { margin-bottom:0; }
+  .muted { color:var(--muted); font-size:13px; }
+  .empty-state { text-align:center; padding:36px 16px; color:var(--muted); }
+  .empty-state .emoji { font-size:32px; margin-bottom:8px; display:block; }
+
+  .badge { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; padding:4px 10px; border-radius:999px; }
+  .badge-lead { background:#FBF0DA; color:#96690B; }
+  .badge-active { background:#E3F3EA; color:#1E7A54; }
+  .badge-inactive { background:#EDEDED; color:#666; }
+  .badge-won { background:#E3F3EA; color:#1E7A54; }
+  .badge-pending { background:#E4ECF7; color:#2A5599; }
+  .badge-lost { background:#FBE7E4; color:#A6362C; }
+
+  .list-item { display:flex; align-items:center; justify-content:space-between; padding:11px 2px; border-bottom:1px solid var(--line); gap:8px; }
+  .list-item:last-child { border-bottom:none; }
+  .li-name { font-weight:700; font-size:14px; }
+  .li-sub { font-size:12px; color:var(--muted); margin-top:2px; }
+  .li-code { font-size:12px; color:var(--teal); font-weight:700; background:rgba(14,138,109,.1); padding:2px 8px; border-radius:6px; }
+
+  .summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:4px; }
+  .summary-box { background:var(--bg); border-radius:12px; padding:14px; text-align:center; }
+  .summary-num { font-size:22px; font-weight:900; }
+  .summary-cap { font-size:12px; color:var(--muted); margin-top:4px; }
+
+  .progress-track { background:var(--bg); border-radius:999px; height:12px; overflow:hidden; margin-top:8px; }
+  .progress-fill { height:100%; background:linear-gradient(90deg, var(--teal), var(--teal-2)); border-radius:999px; }
+
+  .tabbar { position:fixed; bottom:0; left:0; right:0; z-index:30; background:var(--card); border-top:1px solid var(--line); display:flex; padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px)); }
+  .tab-btn { flex:1; background:none; border:none; font-family:inherit; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 2px; color:var(--muted); font-size:11px; font-weight:700; border-radius:10px; }
+  .tab-btn .ic { font-size:19px; }
+  .tab-btn.active { color:var(--teal); }
+
+  .toast { position:fixed; bottom:calc(84px + env(safe-area-inset-bottom,0px)); left:50%; transform:translateX(-50%); background:var(--navy); color:#fff; padding:11px 18px; border-radius:10px; font-size:13.5px; font-weight:600; z-index:50; box-shadow:0 8px 20px rgba(0,0,0,.25); max-width:88%; text-align:center; }
+  .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .section-head h3 { margin:0; font-size:15px; font-weight:800; }
+  .link-btn { background:none; border:none; color:var(--teal); font-family:inherit; font-weight:700; font-size:13px; cursor:pointer; padding:4px; }
+  .req-item { border:1px solid var(--line); border-radius:12px; padding:13px; margin-bottom:10px; }
+  .req-actions { display:flex; gap:8px; }
+  .rank-num { width:26px; height:26px; border-radius:50%; background:var(--bg); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; color:var(--navy); flex-shrink:0; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+  "use strict";
+  var API_BASE = "/api";
+  var authToken = null;
+  var user = null;
+  var state = { tab:null, month: (new Date()).toISOString().slice(0,7), draft:{}, ratingSaleId:null };
+
+  // ============ REST API adapter (replaces the Claude "db" capability) ============
+  function apiFetch(path, opts){
+    opts = opts || {};
+    var headers = Object.assign({"Content-Type":"application/json"}, opts.headers||{});
+    if (authToken) headers["Authorization"] = "Bearer " + authToken;
+    return fetch(API_BASE + path, Object.assign({}, opts, {headers:headers})).then(function(r){
+      return r.text().then(function(txt){
+        var data = txt ? JSON.parse(txt) : null;
+        if (!r.ok){ var err = new Error((data&&data.error)||"request_failed"); err.status = r.status; throw err; }
+        return data;
+      });
+    });
+  }
+  function toDoc(item){
+    if (!item) return null;
+    var id = item.id; var data = Object.assign({}, item); delete data.id;
+    return { id:id, exists:true, data:function(){ return data; } };
+  }
+  function collection(name){
+    return {
+      doc: function(id){
+        return {
+          get: function(){
+            return apiFetch("/"+name+"/"+encodeURIComponent(id)).then(function(item){
+              return item ? toDoc(item) : { exists:false, id:id, data:function(){ return null; } };
+            }).catch(function(e){
+              if (e.status===404) return { exists:false, id:id, data:function(){ return null; } };
+              throw e;
+            });
+          },
+          set: function(obj){ return apiFetch("/"+name+"/"+encodeURIComponent(id), {method:"PUT", body:JSON.stringify(obj)}); },
+          update: function(obj){ return apiFetch("/"+name+"/"+encodeURIComponent(id), {method:"PATCH", body:JSON.stringify(obj)}); },
+          delete: function(){ return apiFetch("/"+name+"/"+encodeURIComponent(id), {method:"DELETE"}); }
+        };
+      },
+      add: function(obj){ return apiFetch("/"+name, {method:"POST", body:JSON.stringify(obj)}); },
+      get: function(){ return apiFetch("/"+name).then(function(arr){ return { docs:(arr||[]).map(toDoc) }; }); },
+      where: function(){ return { get: function(){ return apiFetch("/"+name).then(function(arr){ return { docs:(arr||[]).map(toDoc) }; }); } }; }
+    };
+  }
+  var db = { collection: collection };
+
+  // ============ أقسام الشركة ============
+  var DEPARTMENTS = [
+    "سيلز (Sales)", "تيلي سيلز (Telesales)", "جرافيك ديزاين (Graphic Design)",
+    "سوشيال ميديا (Social Media)", "برمجة (Programming)", "SEO", "UI/UX",
+    "ميديا باير (Media Buyer)", "فيديو إيديتنج (Video Editing)", "أكونت مانجر (Account Manager)",
+    "كونتنت كرييتور (Content Creator)", "داتا إنتري (Data Entry)", "داتا SEO (Data SEO)",
+    "ماركتينج (Marketing)", "تكنيكال سبورت (Technical)"
+  ];
+  function deptSelectEl(selected){
+    var opts = [ el("option", {value:""}, ["اختر القسم"]) ].concat(DEPARTMENTS.map(function(d){
+      var attrs = {value:d}; if (d===selected) attrs.selected = "selected";
+      return el("option", attrs, [d]);
+    }));
+    return el("select", {}, opts);
+  }
+
+  var MONTHS_AR = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+  var SERVICE_TYPES = [
+    ["social", "إدارة سوشيال ميديا"],
+    ["ads", "إعلانات ممولة (Meta/Google/Snapchat/TikTok)"],
+    ["seo", "تحسين محركات البحث SEO"],
+    ["content", "إنتاج محتوى"],
+    ["web", "تصميم وتطوير مواقع"],
+    ["branding", "هوية بصرية وبراندنج"],
+    ["other", "خدمة أخرى"]
+  ];
+  var LEAD_SOURCES = [
+    ["referral", "إحالة/توصية"],
+    ["social", "سوشيال ميديا"],
+    ["website", "موقع الشركة"],
+    ["direct", "تواصل مباشر"],
+    ["event", "معرض/فعالية"],
+    ["other", "مصدر آخر"]
+  ];
+  var SAUDI_CITIES = ["الرياض","جدة","الدمام","مكة المكرمة","المدينة المنورة","الخبر","الطائف","أبها","مدينة أخرى"];
+  function labelFor(list, val){ var f = list.find(function(x){ return x[0]===val; }); return f ? f[1] : val; }
+
+  var STATUS_LABELS = {
+    lead: {text:"عميل محتمل", cls:"badge-lead"},
+    active: {text:"عميل نشط", cls:"badge-active"},
+    inactive: {text:"غير نشط", cls:"badge-inactive"}
+  };
+  var DEAL_LABELS = {
+    won: {text:"مكتملة", cls:"badge-won"},
+    pending: {text:"قيد التنفيذ", cls:"badge-pending"},
+    lost: {text:"خسرت", cls:"badge-lost"}
+  };
+
+  function el(tag, attrs, children){
+    var e = document.createElement(tag);
+    attrs = attrs || {};
+    for (var k in attrs){
+      if (k==="class") e.className = attrs[k];
+      else if (k==="html") e.innerHTML = attrs[k];
+      else if (k.indexOf("on")===0) e.addEventListener(k.slice(2), attrs[k]);
+      else e.setAttribute(k, attrs[k]);
+    }
+    (children||[]).forEach(function(c){
+      if (c===null||c===undefined) return;
+      if (typeof c==="string") e.appendChild(document.createTextNode(c));
+      else e.appendChild(c);
+    });
+    return e;
+  }
+  function fmtMoney(n){ n = Math.round((n||0)*100)/100; return n.toLocaleString("ar-EG"); }
+  function todayStr(){ return new Date().toISOString().slice(0,10); }
+  function monthLabel(mk){ var p=mk.split("-"); return (MONTHS_AR[parseInt(p[1],10)-1]||"") + " " + p[0]; }
+  function showToast(msg){
+    var t = el("div", {class:"toast"}, [msg]);
+    document.getElementById("app").appendChild(t);
+    setTimeout(function(){ t.remove(); }, 2600);
+  }
+  function saveSession(){ try{ sessionStorage.setItem("crm_token", authToken); }catch(e){} }
+  function clearSession(){ try{ sessionStorage.removeItem("crm_token"); }catch(e){} }
+  function loadSessionToken(){ try{ return sessionStorage.getItem("crm_token"); }catch(e){ return null; } }
+
+  function empRef(code){ return db.collection("employees").doc(code); }
+  function clientsCol(){ return db.collection("clients"); }
+  function salesCol(){ return db.collection("sales"); }
+
+  function listEmployees(){
+    return db.collection("employees").where("role","==","employee").get().then(function(qs){
+      return qs.docs.map(function(d){ return Object.assign({code:d.id}, d.data()); });
+    });
+  }
+
+  function ratingStars(n){
+    n = Number(n)||0;
+    if (!n) return "بدون تقييم";
+    return "★".repeat(n) + "☆".repeat(5-n);
+  }
+  function computeKpi(sales, month, employee){
+    var mine = sales.filter(function(s){ return s.employeeCode===employee.code && (s.date||"").slice(0,7)===month; });
+    var won = mine.filter(function(s){ return s.status==="won"; });
+    var achieved = won.reduce(function(a,s){ return a+(Number(s.amount)||0); }, 0);
+    var target = Number(employee.monthlyTarget)||0;
+    var pct = target>0 ? Math.min(100, Math.round((achieved/target)*100)) : 0;
+    var rate = Number(employee.commissionRate)||0;
+    var commission = achieved * (rate/100);
+    var pendingCount = mine.filter(function(s){ return s.status==="pending"; }).length;
+    var wonCount = won.length;
+    var rated = mine.filter(function(s){ return Number(s.rating)>0; });
+    var avgRating = rated.length ? (rated.reduce(function(a,s){ return a+Number(s.rating); },0)/rated.length) : null;
+    return { achieved:achieved, target:target, pct:pct, commission:commission, wonCount:wonCount, pendingCount:pendingCount, avgRating:avgRating, ratedCount:rated.length };
+  }
+
+  function render(){
+    var app = document.getElementById("app");
+    app.innerHTML = "";
+    if (!user){ app.appendChild(renderLogin()); return; }
+    app.appendChild(renderShell());
+  }
+
+  // ================= LOGIN =================
+  function renderLogin(){
+    var errBox, input, pinInput;
+    function doLogin(){
+      var code=(input.value||"").trim(), pin=(pinInput.value||"").trim();
+      errBox.textContent = "";
+      if (!code || !pin){ errBox.textContent = "اكتب الكود والرقم السري"; return; }
+      loginBtn.disabled = true;
+      apiFetch("/login", {method:"POST", body:JSON.stringify({code:code, pin:pin})}).then(function(res){
+        loginBtn.disabled = false;
+        authToken = res.token; user = res.employee; saveSession(); state.tab = defaultTab(); render();
+      }).catch(function(e){
+        loginBtn.disabled = false;
+        errBox.textContent = (e.status===401) ? "الكود أو الرقم السري غلط" : "حصل خطأ في الاتصال بالسيرفر";
+      });
+    }
+    input = el("input", {placeholder:"الكود", type:"text", inputmode:"latin", onkeydown:function(ev){ if(ev.key==="Enter") pinInput.focus(); }});
+    pinInput = el("input", {placeholder:"الرقم السري", type:"password", inputmode:"numeric", style:"margin-top:10px;", onkeydown:function(ev){ if(ev.key==="Enter") doLogin(); }});
+    errBox = el("div", {class:"login-error"}, [""]);
+    var loginBtn = el("button", {class:"btn btn-primary", onclick:doLogin}, ["دخول"]);
+    return el("div", {class:"login-wrap"}, [
+      el("div", {class:"login-mark"}, ["✊"]),
+      el("div", {class:"brand-word"}, ["إنجاز"]),
+      el("div", {class:"login-title"}, ["نظام العملاء والأداء"]),
+      el("div", {class:"login-sub"}, ["إدارة بيانات العملاء ومتابعة أداء الفريق (KPI)"]),
+      el("div", {class:"login-card"}, [ el("label",{class:"field-label"},["الكود والرقم السري"]), input, pinInput, loginBtn, errBox ])
+    ]);
+  }
+
+  // ================= SHELL =================
+  function defaultTab(){ return user.role==="admin" ? "ad-clients" : "em-clients"; }
+  function tabsFor(){
+    if (user.role==="admin") return [
+      {id:"ad-clients", ic:"👤", label:"العملاء"},
+      {id:"ad-employees", ic:"🧑‍💼", label:"مسؤولي الحسابات"},
+      {id:"ad-sales", ic:"💵", label:"العقود والصفقات"},
+      {id:"ad-kpi", ic:"📊", label:"الأداء"}
+    ];
+    return [
+      {id:"em-clients", ic:"👤", label:"عملائي"},
+      {id:"em-sales", ic:"💵", label:"صفقاتي"},
+      {id:"em-kpi", ic:"📊", label:"أدائي"}
+    ];
+  }
+  function roleLabel(r){ return r==="admin" ? "مدير النظام" : "مسؤول حساب"; }
+
+  function renderShell(){
+    var wrap = el("div", {});
+    var top = el("div", {class:"topbar"}, [
+      el("div", {}, [ el("div",{class:"topbar-title"},["✊ إنجاز — "+(user.name||user.code)]), el("div",{class:"topbar-sub"},[roleLabel(user.role)+" · كود "+user.code]) ]),
+      el("button", {class:"topbar-logout", onclick:function(){ apiFetch("/logout",{method:"POST"}).catch(function(){}); user=null; authToken=null; clearSession(); render(); }}, ["خروج"])
+    ]);
+    var main = el("main", {id:"main-area"}, []);
+    var tabs = tabsFor();
+    var bar = el("div", {class:"tabbar"}, tabs.map(function(t){
+      return el("button", { class:"tab-btn"+(state.tab===t.id?" active":""), onclick:function(){ state.tab=t.id; render(); } }, [ el("span",{class:"ic"},[t.ic]), el("span",{},[t.label]) ]);
+    }));
+    wrap.appendChild(top); wrap.appendChild(main); wrap.appendChild(bar);
+    setTimeout(function(){ mountTab(main); }, 0);
+    return wrap;
+  }
+
+  function mountTab(main){
+    main.innerHTML = "";
+    main.appendChild(el("div", {class:"muted"}, ["جاري التحميل…"]));
+    var fn = {
+      "ad-clients": viewClients,
+      "ad-employees": viewEmployees,
+      "ad-sales": viewSales,
+      "ad-kpi": viewKpiReport,
+      "em-clients": viewClients,
+      "em-sales": viewSales,
+      "em-kpi": viewKpiReport
+    }[state.tab];
+    if (fn) fn(main);
+  }
+  function reload(){ mountTab(document.getElementById("main-area")); }
+  function emptyState(emoji, text){ return el("div", {class:"card empty-state"}, [ el("span",{class:"emoji"},[emoji]), text ]); }
+  function summaryBox(num, cap){ return el("div", {class:"summary-box"}, [ el("div",{class:"summary-num"},[num]), el("div",{class:"summary-cap"},[cap]) ]); }
+
+  // ================= CLIENTS =================
+  function viewClients(main){
+    main.innerHTML = "";
+    main.appendChild(el("div", {class:"muted"}, ["جاري التحميل…"]));
+    var isAdmin = user.role==="admin";
+    Promise.all([clientsCol().get(), isAdmin ? listEmployees() : Promise.resolve([])]).then(function(res){
+      var all = res[0].docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+      var employees = res[1];
+      var list = isAdmin ? all : all.filter(function(c){ return c.assignedCode===user.code; });
+      list.sort(function(a,b){ return (b.createdAt||0)-(a.createdAt||0); });
+      main.innerHTML = "";
+
+      // Add client form
+      var nameInput = el("input", {type:"text", placeholder:"اسم العميل"});
+      var companyInput = el("input", {type:"text", placeholder:"الشركة (اختياري)"});
+      var phoneInput = el("input", {type:"tel", placeholder:"رقم الجوال (05xxxxxxxx)"});
+      var emailInput = el("input", {type:"email", placeholder:"الإيميل (اختياري)"});
+      var citySel = el("select", {}, [el("option",{value:""},["— اختر المدينة —"])].concat(SAUDI_CITIES.map(function(c){ return el("option",{value:c},[c]); })));
+      var serviceSel = el("select", {}, SERVICE_TYPES.map(function(s){ return el("option",{value:s[0]},[s[1]]); }));
+      var sourceSel = el("select", {}, LEAD_SOURCES.map(function(s){ return el("option",{value:s[0]},[s[1]]); }));
+      var contractValueInput = el("input", {type:"number", placeholder:"قيمة العقد الشهري (ر.س، اختياري)"});
+      var statusSel = el("select", {}, [ el("option",{value:"lead"},["عميل محتمل"]), el("option",{value:"active"},["عميل نشط"]), el("option",{value:"inactive"},["غير نشط"]) ]);
+      var assignSel = isAdmin ? el("select", {}, [el("option",{value:""},["— بدون مسؤول حساب —"])].concat(employees.map(function(e){ return el("option",{value:e.code},[(e.name||e.code)+" ("+e.code+")"]); }))) : null;
+      var notesInput = el("textarea", {rows:"2", placeholder:"ملاحظات (اختياري)"});
+      var addBtn = el("button", {class:"btn btn-primary", onclick:function(){
+        var name = nameInput.value.trim();
+        if (!name){ showToast("اكتب اسم العميل"); return; }
+        addBtn.disabled = true;
+        clientsCol().add({
+          name: name, company: companyInput.value.trim()||null, phone: phoneInput.value.trim()||null,
+          email: emailInput.value.trim()||null, status: statusSel.value,
+          city: citySel.value||null, serviceType: serviceSel.value, leadSource: sourceSel.value,
+          monthlyContractValue: contractValueInput.value ? Number(contractValueInput.value) : null,
+          assignedCode: isAdmin ? (assignSel.value||null) : user.code,
+          notes: notesInput.value.trim()||"", createdAt: Date.now(), createdBy: user.code
+        }).then(function(){ showToast("تمت إضافة العميل"); viewClients(main); })
+          .catch(function(){ showToast("حصل خطأ"); addBtn.disabled=false; });
+      }}, ["إضافة عميل"]);
+
+      var formFields = [
+        el("div",{class:"field"},[el("label",{class:"field-label"},["الاسم"]), nameInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["الشركة"]), companyInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["رقم الجوال"]), phoneInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["الإيميل"]), emailInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["المدينة"]), citySel]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["نوع الخدمة"]), serviceSel]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["مصدر العميل"]), sourceSel]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["قيمة العقد الشهري"]), contractValueInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["الحالة"]), statusSel])
+      ];
+      if (isAdmin) formFields.push(el("div",{class:"field"},[el("label",{class:"field-label"},["مسؤول الحساب"]), assignSel]));
+      formFields.push(el("div",{class:"field"},[el("label",{class:"field-label"},["ملاحظات"]), notesInput]));
+      formFields.push(addBtn);
+      main.appendChild(el("div", {class:"card"}, [ el("div",{class:"card-title"},["إضافة عميل جديد"]) ].concat(formFields)));
+
+      main.appendChild(el("div", {class:"card-title"}, ["العملاء ("+list.length+")"]));
+      if (list.length===0){ main.appendChild(emptyState("👤","لسه مفيش عملاء مسجلين")); return; }
+      var card = el("div", {class:"card"}, []);
+      list.forEach(function(c){
+        if (state.editingClient === c.id){ card.appendChild(clientEditForm(c, employees, isAdmin, main)); return; }
+        if (state.deletingClient === c.id){
+          card.appendChild(el("div", {class:"req-item"}, [
+            el("div", {}, ["متأكد إنك عايز تمسح "+(c.name)+"؟"]),
+            el("div", {class:"req-actions", style:"margin-top:10px;"}, [
+              el("button", {class:"btn btn-red btn-sm", onclick:function(){
+                clientsCol().doc(c.id).delete().then(function(){ showToast("تم الحذف"); state.deletingClient=null; viewClients(main); });
+              }}, ["تأكيد الحذف"]),
+              el("button", {class:"btn btn-ghost btn-sm", onclick:function(){ state.deletingClient=null; viewClients(main); }}, ["إلغاء"])
+            ])
+          ]));
+          return;
+        }
+        var st = STATUS_LABELS[c.status]||STATUS_LABELS.lead;
+        var assignedEmp = employees.find(function(e){ return e.code===c.assignedCode; });
+        var subBits = [];
+        if (c.company) subBits.push(c.company);
+        if (c.city) subBits.push(c.city);
+        subBits.push(labelFor(SERVICE_TYPES, c.serviceType));
+        if (c.monthlyContractValue) subBits.push(fmtMoney(c.monthlyContractValue)+" ر.س/شهر");
+        if (isAdmin && assignedEmp) subBits.push("مسؤول الحساب: "+(assignedEmp.name||assignedEmp.code));
+        card.appendChild(el("div", {class:"list-item"}, [
+          el("div", {}, [
+            el("div",{class:"li-name"},[c.name]),
+            el("div",{class:"li-sub"},[subBits.join(" · ")])
+          ]),
+          el("div", {style:"display:flex;align-items:center;gap:6px;"}, [
+            el("span", {class:"badge "+st.cls}, [st.text]),
+            el("button", {class:"link-btn", onclick:function(){ state.editingClient=c.id; viewClients(main); }}, ["تعديل"]),
+            isAdmin ? el("button", {class:"link-btn", style:"color:var(--red);", onclick:function(){ state.deletingClient=c.id; viewClients(main); }}, ["حذف"]) : null
+          ])
+        ]));
+      });
+      main.appendChild(card);
+    });
+  }
+
+  function clientEditForm(c, employees, isAdmin, main){
+    var nameInput = el("input", {type:"text", value:c.name||""});
+    var companyInput = el("input", {type:"text", value:c.company||""});
+    var phoneInput = el("input", {type:"tel", value:c.phone||""});
+    var emailInput = el("input", {type:"email", value:c.email||""});
+    var citySel = el("select", {}, [el("option",{value:""},["— اختر المدينة —"])].concat(SAUDI_CITIES.map(function(ci){
+      return el("option", Object.assign({value:ci}, ci===c.city?{selected:"selected"}:{}), [ci]);
+    })));
+    var serviceSel = el("select", {}, SERVICE_TYPES.map(function(s){
+      return el("option", Object.assign({value:s[0]}, s[0]===c.serviceType?{selected:"selected"}:{}), [s[1]]);
+    }));
+    var sourceSel = el("select", {}, LEAD_SOURCES.map(function(s){
+      return el("option", Object.assign({value:s[0]}, s[0]===c.leadSource?{selected:"selected"}:{}), [s[1]]);
+    }));
+    var contractValueInput = el("input", {type:"number", value: c.monthlyContractValue||""});
+    var statusSel = el("select", {}, ["lead","active","inactive"].map(function(v){
+      return el("option", Object.assign({value:v}, v===c.status?{selected:"selected"}:{}), [STATUS_LABELS[v].text]);
+    }));
+    var assignSel = isAdmin ? el("select", {}, [el("option",{value:""},["— بدون مسؤول حساب —"])].concat(employees.map(function(e){
+      return el("option", Object.assign({value:e.code}, e.code===c.assignedCode?{selected:"selected"}:{}), [(e.name||e.code)+" ("+e.code+")"]);
+    }))) : null;
+    var notesInput = el("textarea", {rows:"2"}, [c.notes||""]);
+    var saveBtn = el("button", {class:"btn btn-primary btn-sm", onclick:function(){
+      var update = {
+        name:nameInput.value.trim()||c.name, company:companyInput.value.trim()||null, phone:phoneInput.value.trim()||null,
+        email:emailInput.value.trim()||null, status:statusSel.value, city: citySel.value||null,
+        serviceType: serviceSel.value, leadSource: sourceSel.value,
+        monthlyContractValue: contractValueInput.value ? Number(contractValueInput.value) : null,
+        notes:notesInput.value.trim()||""
+      };
+      if (isAdmin) update.assignedCode = assignSel.value||null;
+      saveBtn.disabled = true;
+      clientsCol().doc(c.id).update(update).then(function(){ showToast("تم الحفظ"); state.editingClient=null; viewClients(main); })
+        .catch(function(){ showToast("حصل خطأ"); saveBtn.disabled=false; });
+    }}, ["حفظ"]);
+    var cancelBtn = el("button", {class:"btn btn-ghost btn-sm", onclick:function(){ state.editingClient=null; viewClients(main); }}, ["إلغاء"]);
+    var fields = [
+      el("div",{class:"field"},[el("label",{class:"field-label"},["الاسم"]), nameInput]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["الشركة"]), companyInput]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["رقم الجوال"]), phoneInput]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["الإيميل"]), emailInput]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["المدينة"]), citySel]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["نوع الخدمة"]), serviceSel]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["مصدر العميل"]), sourceSel]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["قيمة العقد الشهري"]), contractValueInput]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["الحالة"]), statusSel])
+    ];
+    if (isAdmin) fields.push(el("div",{class:"field"},[el("label",{class:"field-label"},["مسؤول الحساب"]), assignSel]));
+    fields.push(el("div",{class:"field"},[el("label",{class:"field-label"},["ملاحظات"]), notesInput]));
+    fields.push(el("div", {class:"req-actions"}, [saveBtn, cancelBtn]));
+    return el("div", {class:"req-item"}, fields);
+  }
+
+  // ================= EMPLOYEES (admin only) =================
+  function viewEmployees(main){
+    main.innerHTML = "";
+    main.appendChild(el("div",{class:"muted"},["جاري التحميل…"]));
+    listEmployees().then(function(employees){
+      main.innerHTML = "";
+      var nameInput = el("input", {type:"text", placeholder:"اسم مسؤول الحساب"});
+      var codeInput = el("input", {type:"text", placeholder:"كود جديد"});
+      var pinInput = el("input", {type:"text", inputmode:"numeric", placeholder:"رقم سري (4 أرقام)"});
+      var emailInput = el("input", {type:"email", placeholder:"الإيميل (اختياري)"});
+      var targetInput = el("input", {type:"number", placeholder:"الهدف الشهري (ر.س)"});
+      var rateInput = el("input", {type:"number", placeholder:"نسبة العمولة % (مثال: 5)"});
+      var deptInput = deptSelectEl("");
+      var addBtn = el("button", {class:"btn btn-primary", onclick:function(){
+        var name=nameInput.value.trim(), code=codeInput.value.trim(), pin=pinInput.value.trim();
+        if (!name||!code||!pin){ showToast("اكتب الاسم والكود والرقم السري"); return; }
+        addBtn.disabled = true;
+        empRef(code).get().then(function(snap){
+          if (snap.exists){ showToast("الكود ده متسجل قبل كده"); addBtn.disabled=false; return; }
+          return empRef(code).set({
+            name:name, role:"employee", pin:pin, email:emailInput.value.trim()||null,
+            department: deptInput.value||null,
+            monthlyTarget: targetInput.value?Number(targetInput.value):0,
+            commissionRate: rateInput.value?Number(rateInput.value):0,
+            createdAt: Date.now()
+          }).then(function(){ showToast("تمت إضافة مسؤول الحساب"); viewEmployees(main); });
+        }).catch(function(){ showToast("حصل خطأ"); addBtn.disabled=false; });
+      }}, ["إضافة مسؤول حساب"]);
+
+      main.appendChild(el("div", {class:"card"}, [
+        el("div",{class:"card-title"},["إضافة مسؤول حساب جديد"]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["الاسم"]), nameInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["الكود"]), codeInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["الرقم السري"]), pinInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["الإيميل"]), emailInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["القسم"]), deptInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["الهدف الشهري (ر.س)"]), targetInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["نسبة العمولة %"]), rateInput]),
+        addBtn
+      ]));
+
+      main.appendChild(el("div",{class:"card-title"},["مسؤولي الحسابات ("+employees.length+")"]));
+      if (employees.length===0){ main.appendChild(emptyState("🧑‍💼","لسه مفيش مسؤولي حسابات")); return; }
+      var card = el("div", {class:"card"}, []);
+      employees.forEach(function(e){
+        if (state.editingEmp === e.code){ card.appendChild(empEditForm(e, main)); return; }
+        if (state.deletingEmp === e.code){
+          card.appendChild(el("div", {class:"req-item"}, [
+            el("div", {}, ["متأكد إنك عايز تمسح "+(e.name||e.code)+"؟"]),
+            el("div", {class:"req-actions", style:"margin-top:10px;"}, [
+              el("button", {class:"btn btn-red btn-sm", onclick:function(){
+                empRef(e.code).delete().then(function(){ showToast("تم الحذف"); state.deletingEmp=null; viewEmployees(main); });
+              }}, ["تأكيد الحذف"]),
+              el("button", {class:"btn btn-ghost btn-sm", onclick:function(){ state.deletingEmp=null; viewEmployees(main); }}, ["إلغاء"])
+            ])
+          ]));
+          return;
+        }
+        card.appendChild(el("div", {class:"list-item"}, [
+          el("div", {}, [ el("div",{class:"li-name"},[e.name||e.code]), el("div",{class:"li-sub"},[(e.department?("القسم: "+e.department+" · "):"")+"الهدف: "+fmtMoney(e.monthlyTarget)+" ر.س · العمولة: "+(e.commissionRate||0)+"%"]) ]),
+          el("div", {style:"display:flex;align-items:center;gap:8px;"}, [
+            el("span", {class:"li-code"}, [e.code]),
+            el("button", {class:"link-btn", onclick:function(){ state.editingEmp=e.code; viewEmployees(main); }}, ["تعديل"]),
+            el("button", {class:"link-btn", style:"color:var(--red);", onclick:function(){ state.deletingEmp=e.code; viewEmployees(main); }}, ["حذف"])
+          ])
+        ]));
+      });
+      main.appendChild(card);
+    });
+  }
+
+  function empEditForm(e, main){
+    var nameInput = el("input", {type:"text", value:e.name||""});
+    var emailInput = el("input", {type:"email", value:e.email||""});
+    var deptInput = deptSelectEl(e.department||"");
+    var targetInput = el("input", {type:"number", value:e.monthlyTarget||0});
+    var rateInput = el("input", {type:"number", value:e.commissionRate||0});
+    var pinInput = el("input", {type:"text", inputmode:"numeric", placeholder:"اتركه فاضي لو مش هتغيّره"});
+    var saveBtn = el("button", {class:"btn btn-primary btn-sm", onclick:function(){
+      var update = { name:nameInput.value.trim()||e.code, email:emailInput.value.trim()||null, department:deptInput.value||null, monthlyTarget:Number(targetInput.value)||0, commissionRate:Number(rateInput.value)||0 };
+      if (pinInput.value.trim()) update.pin = pinInput.value.trim();
+      saveBtn.disabled = true;
+      empRef(e.code).update(update).then(function(){ showToast("تم الحفظ"); state.editingEmp=null; viewEmployees(main); })
+        .catch(function(){ showToast("حصل خطأ"); saveBtn.disabled=false; });
+    }}, ["حفظ"]);
+    var cancelBtn = el("button", {class:"btn btn-ghost btn-sm", onclick:function(){ state.editingEmp=null; viewEmployees(main); }}, ["إلغاء"]);
+    return el("div", {class:"req-item"}, [
+      el("div",{class:"field"},[el("label",{class:"field-label"},["الاسم"]), nameInput]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["الإيميل"]), emailInput]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["القسم"]), deptInput]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["الهدف الشهري"]), targetInput]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["نسبة العمولة %"]), rateInput]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["رقم سري جديد"]), pinInput]),
+      el("div", {class:"req-actions"}, [saveBtn, cancelBtn])
+    ]);
+  }
+
+  // ================= SALES =================
+  function viewSales(main){
+    main.innerHTML = "";
+    main.appendChild(el("div",{class:"muted"},["جاري التحميل…"]));
+    var isAdmin = user.role==="admin";
+    Promise.all([salesCol().get(), clientsCol().get()]).then(function(res){
+      var allSales = res[0].docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+      var allClients = res[1].docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+      var myClients = isAdmin ? allClients : allClients.filter(function(c){ return c.assignedCode===user.code; });
+      var list = isAdmin ? allSales : allSales.filter(function(s){ return s.employeeCode===user.code; });
+      list.sort(function(a,b){ return (b.createdAt||0)-(a.createdAt||0); });
+      main.innerHTML = "";
+
+      var clientSel = el("select", {}, [el("option",{value:""},["— اختر العميل —"])].concat(
+        myClients.map(function(c){ return el("option",{value:c.id},[c.name]); })
+      ));
+      var dealTypeSel = el("select", {}, [ el("option",{value:"new"},["عقد جديد"]), el("option",{value:"renewal"},["تجديد عقد"]), el("option",{value:"upsell"},["خدمة إضافية (أب سيل)"]) ]);
+      var amountInput = el("input", {type:"number", placeholder:"قيمة الصفقة (ر.س)"});
+      var dateInput = el("input", {type:"date", value: todayStr()});
+      var statusSel = el("select", {}, [ el("option",{value:"won"},["مكتملة"]), el("option",{value:"pending"},["قيد التنفيذ"]), el("option",{value:"lost"},["خسرت"]) ]);
+      var notesInput = el("input", {type:"text", placeholder:"ملاحظات (اختياري)"});
+      var ratingSel = el("select", {}, [ el("option",{value:""},["بدون تقييم الآن"]) ].concat([1,2,3,4,5].map(function(n){ return el("option",{value:String(n)},[ratingStars(n)+" ("+n+"/5)"]); })));
+      var addBtn = el("button", {class:"btn btn-primary", onclick:function(){
+        var clientId = clientSel.value, amount = Number(amountInput.value);
+        if (!clientId || !amount){ showToast("اختر العميل واكتب القيمة"); return; }
+        var client = myClients.find(function(c){ return c.id===clientId; });
+        addBtn.disabled = true;
+        salesCol().add({
+          clientId: clientId, clientName: client?client.name:"", employeeCode: user.code, employeeName: user.name||user.code,
+          amount: amount, date: dateInput.value||todayStr(), status: statusSel.value, dealType: dealTypeSel.value, notes: notesInput.value.trim()||"",
+          rating: ratingSel.value?Number(ratingSel.value):null,
+          createdAt: Date.now()
+        }).then(function(){ showToast("تم تسجيل الصفقة"); viewSales(main); })
+          .catch(function(){ showToast("حصل خطأ"); addBtn.disabled=false; });
+      }}, ["تسجيل صفقة"]);
+
+      main.appendChild(el("div", {class:"card"}, [
+        el("div",{class:"card-title"},["تسجيل صفقة/عقد"]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["العميل"]), clientSel]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["نوع الصفقة"]), dealTypeSel]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["القيمة (ر.س)"]), amountInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["التاريخ"]), dateInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["الحالة"]), statusSel]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["ملاحظات"]), notesInput]),
+        el("div",{class:"field"},[el("label",{class:"field-label"},["تقييم رضا العميل"]), ratingSel]),
+        addBtn
+      ]));
+
+      main.appendChild(el("div",{class:"card-title"},["آخر الصفقات"]));
+      if (list.length===0){ main.appendChild(emptyState("💵","لسه مفيش صفقات مسجلة")); return; }
+      var card = el("div", {class:"card"}, []);
+      var DEAL_TYPE_LABELS = { new:"عقد جديد", renewal:"تجديد", upsell:"أب سيل" };
+      list.slice(0,40).forEach(function(s){
+        var st = DEAL_LABELS[s.status]||DEAL_LABELS.pending;
+        if (state.ratingSaleId === s.id){ card.appendChild(saleRatingForm(s, main)); return; }
+        card.appendChild(el("div", {class:"list-item"}, [
+          el("div", {}, [
+            el("div",{class:"li-name"},[s.clientName||"—"]),
+            el("div",{class:"li-sub"},[s.date + " · " + (DEAL_TYPE_LABELS[s.dealType]||"عقد جديد") + (isAdmin? " · "+(s.employeeName||s.employeeCode) : "") + (s.notes? " · "+s.notes : "")]),
+            el("div",{class:"li-sub", style:"color:var(--gold);"},[ratingStars(s.rating)])
+          ]),
+          el("div", {style:"display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;"}, [
+            el("span", {class:"badge "+st.cls}, [st.text]),
+            el("span", {style:"font-weight:800;font-size:13px;"}, [fmtMoney(s.amount)+" ر.س"]),
+            el("button", {class:"link-btn", onclick:function(){ state.ratingSaleId=s.id; viewSales(main); }}, [s.rating?"تعديل التقييم":"تقييم العميل"])
+          ])
+        ]));
+      });
+      main.appendChild(card);
+    });
+  }
+  function saleRatingForm(s, main){
+    var sel = el("select", {}, [1,2,3,4,5].map(function(n){
+      var attrs = {value:String(n)}; if (Number(s.rating)===n) attrs.selected="selected";
+      return el("option", attrs, [ratingStars(n)+" ("+n+"/5)"]);
+    }));
+    var saveBtn = el("button", {class:"btn btn-primary btn-sm", onclick:function(){
+      saveBtn.disabled = true;
+      salesCol().doc(s.id).update({rating:Number(sel.value)}).then(function(){ showToast("تم حفظ تقييم رضا العميل"); state.ratingSaleId=null; viewSales(main); })
+        .catch(function(){ showToast("حصل خطأ"); saveBtn.disabled=false; });
+    }}, ["حفظ التقييم"]);
+    var cancelBtn = el("button", {class:"btn btn-ghost btn-sm", onclick:function(){ state.ratingSaleId=null; viewSales(main); }}, ["إلغاء"]);
+    return el("div", {class:"req-item"}, [
+      el("div",{class:"li-name"},[s.clientName||"—"]),
+      el("div",{class:"field"},[el("label",{class:"field-label"},["تقييم رضا العميل"]), sel]),
+      el("div", {class:"req-actions"}, [saveBtn, cancelBtn])
+    ]);
+  }
+
+  // ================= KPI =================
+  function viewKpiReport(main){
+    main.innerHTML = "";
+    var isAdmin = user.role==="admin";
+    var monthInput = el("input", {type:"month", value: state.month, onchange:function(e){ state.month = e.target.value; viewKpiReport(main); }});
+    main.appendChild(el("div", {class:"card"}, [ el("div",{class:"card-title"},["الأداء الشهري"]), el("div",{class:"field"},[el("label",{class:"field-label"},["الشهر: "+monthLabel(state.month)]), monthInput]) ]));
+    var box = el("div", {class:"muted"}, ["جاري الحساب…"]);
+    main.appendChild(box);
+
+    if (isAdmin){
+      Promise.all([listEmployees(), salesCol().get()]).then(function(res){
+        var employees = res[0];
+        var sales = res[1].docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+        box.innerHTML = "";
+        if (employees.length===0){ box.appendChild(emptyState("📊","لسه مفيش مسؤولي حسابات")); return; }
+        var rows = employees.map(function(e){ return Object.assign({emp:e}, computeKpi(sales, state.month, e)); });
+        rows.sort(function(a,b){ return b.achieved - a.achieved; });
+        var totalAchieved = rows.reduce(function(s,r){ return s+r.achieved; }, 0);
+        var totalCommission = rows.reduce(function(s,r){ return s+r.commission; }, 0);
+
+        main.appendChild(el("div", {class:"card"}, [
+          el("div", {class:"summary-grid"}, [
+            summaryBox(fmtMoney(totalAchieved)+" ر.س", "إجمالي المبيعات المحققة"),
+            summaryBox(fmtMoney(totalCommission)+" ر.س", "إجمالي العمولات")
+          ])
+        ]));
+
+        main.appendChild(el("div",{class:"card-title"},["ترتيب الأداء"]));
+        var card = el("div", {class:"card"}, []);
+        rows.forEach(function(r, i){
+          card.appendChild(el("div", {class:"list-item"}, [
+            el("div", {style:"display:flex;align-items:center;gap:10px;"}, [
+              el("div",{class:"rank-num"},[String(i+1)]),
+              el("div", {}, [
+                el("div",{class:"li-name"},[r.emp.name||r.emp.code]),
+                el("div",{class:"li-sub"},[(r.emp.department?("القسم: "+r.emp.department+" · "):"")+"محقق: "+fmtMoney(r.achieved)+" / هدف: "+fmtMoney(r.target)+" ر.س · عمولة: "+fmtMoney(r.commission)+" ر.س"]),
+                el("div",{class:"li-sub", style:"color:var(--gold);"},[r.avgRating? ("رضا العملاء: "+r.avgRating.toFixed(1)+"/5 ("+ratingStars(Math.round(r.avgRating))+", "+r.ratedCount+" تقييم)") : "رضا العملاء: لسه مفيش تقييمات"])
+              ])
+            ]),
+            el("span", {style:"font-weight:800;color:var(--teal);font-size:15px;"}, [r.pct+"%"])
+          ]));
+        });
+        main.appendChild(card);
+      });
+    } else {
+      salesCol().get().then(function(qs){
+        var sales = qs.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+        var k = computeKpi(sales, state.month, user);
+        box.innerHTML = "";
+        main.appendChild(el("div", {class:"card"}, [
+          el("div", {class:"summary-grid"}, [
+            summaryBox(fmtMoney(k.achieved)+" ر.س", "المبيعات المحققة"),
+            summaryBox(fmtMoney(k.target)+" ر.س", "الهدف الشهري"),
+            summaryBox(k.wonCount.toString(), "صفقات مكتملة"),
+            summaryBox(fmtMoney(k.commission)+" ر.س", "العمولة المستحقة"),
+            summaryBox(k.avgRating? (k.avgRating.toFixed(1)+"/5") : "—", "متوسط رضا العملاء")
+          ]),
+          el("div", {class:"progress-track"}, [ el("div", {class:"progress-fill", style:"width:"+k.pct+"%;"}, []) ]),
+          el("div", {class:"muted", style:"text-align:center;margin-top:8px;"}, ["تحقيق الهدف: "+k.pct+"%"])
+        ]));
+      });
+    }
+  }
+
+  // ================= INIT =================
+  function boot(){
+    var token = loadSessionToken();
+    if (!token){ render(); return; }
+    var appEl = document.getElementById("app");
+    appEl.appendChild(el("div", {class:"login-wrap"}, [ el("div",{class:"login-mark"},["✊"]), el("div",{class:"brand-word"},["إنجاز"]), el("div",{class:"login-title"},["جاري التجهيز…"]) ]));
+    authToken = token;
+    apiFetch("/me").then(function(emp){
+      user = emp; state.tab = defaultTab(); render();
+    }).catch(function(){ authToken=null; clearSession(); render(); });
+  }
+  boot();
+})();
+</script>
+</body>
+</html>
